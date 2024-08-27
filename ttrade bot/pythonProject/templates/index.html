@@ -1,0 +1,153 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3 Shop</title>
+</head>
+<body>
+    <h1>Web3 Shop</h1>
+
+    <h2>Products</h2>
+    <ul>
+        {% for product in products %}
+            <li>
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.description }}</p>
+                <p>Price: {{ product.price }} ETH</p>
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" width="100" />
+                <p>Seller: {{ product.seller }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Add Product</h2>
+    <form action="/add_product" method="post">
+        <input type="text" name="name" placeholder="Product Name" required>
+        <input type="text" name="description" placeholder="Description" required>
+        <input type="number" name="price" placeholder="Price (ETH)" step="0.01" required>
+        <input type="text" name="seller" placeholder="Seller Address" required>
+        <input type="text" name="image_url" placeholder="Image URL">
+        <button type="submit">Add Product</button>
+    </form>
+</body>
+</html>
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+</head>
+<body>
+    <h1>Your Cart</h1>
+    <ul>
+        {% for item in cart_items %}
+            <li>
+                <h3>{{ item.product.name }}</h3>
+                <p>Price: {{ item.product.price }} ETH</p>
+                <p>Quantity: {{ item.quantity }}</p>
+                <p>Total: {{ item.product.price * item.quantity }} ETH</p>
+            </li>
+        {% endfor %}
+    </ul>
+    <h2>Total Price: {{ total_price }} ETH</h2>
+    <a href="/checkout">Checkout</a> | <a href="/">Continue Shopping</a>
+</body>
+</html>
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3 Shop</title>
+</head>
+<body>
+    <h1>Web3 Shop</h1>
+
+    <h2>Products</h2>
+    <ul>
+        {% for product in products %}
+            <li>
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.description }}</p>
+                <p>Price: {{ product.price }} ETH</p>
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" width="100" />
+                <p>Seller: {{ product.seller }}</p>
+                <a href="/add_to_cart/{{ product.id }}">Add to Cart</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2><a href="/cart">View Cart</a></h2>
+
+    <h2>Add Product</h2>
+    <form action="/add_product" method="post">
+        <input type="text" name="name" placeholder="Product Name" required>
+        <input type="text" name="description" placeholder="Description" required>
+        <input type="number" name="price" placeholder="Price (ETH)" step="0.01" required>
+        <input type="text" name="seller" placeholder="Seller Address" required>
+        <input type="text" name="image_url" placeholder="Image URL">
+        <button type="submit">Add Product</button>
+    </form>
+</body>
+</html>
+html
+<script src="https://cdn.tonwallet.com/tonwallet.js"></script>
+
+<script>
+    async function payWithTon(amount, recipient) {
+        const tonWallet = new TonWallet();
+        const response = await tonWallet.sendMoney({
+            to: recipient,
+            amount: amount
+        });
+
+        if (response) {
+            alert('Payment successful!');
+            // Здесь вы можете также сделать запрос к вашему серверу для обработки заказа
+            // Например:
+            // fetch('/pay', { method: 'POST', body: JSON.stringify({amount, recipient}) });
+        } else {
+            alert('Payment failed!');
+        }
+    }
+</script>
+
+
+Добавьте кнопку на вашу страницу для совершения платежа:
+
+html
+<button onclick="payWithTon(1000000000, 'address_here')">Pay with TON</button>
+
+
+Где 1000000000 - это сумма в наносеках (1 TON = 1e9 наносек), а 'address_here' - адрес, на который будет произведен платеж.
+html
+<button onclick="payWithMir(10000, 'order_id_here')">Pay with MIR</button>
+
+<script>
+function payWithMir(amount, orderId) {
+    fetch('/pay_mir', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({amount: amount, order_id: orderId}),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Payment successful!');
+            // Здесь можно добавить логику для обработки успешного платежа
+        } else {
+            alert('Payment failed: ' + data.message);
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+</script>
